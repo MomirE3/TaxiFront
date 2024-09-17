@@ -8,22 +8,7 @@ import {
 import { DriverStatus } from '../models/Driver';
 import { DriverServiceType } from '../Services/DriverService';
 import { JWTStorageType } from '../Services/JWTStorage';
-import {
-	Box,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Button,
-	Typography,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Paper,
-} from '@mui/material';
+import { Container, Table, Button, Modal, Row, Col } from 'react-bootstrap';
 
 interface IProps {
 	rideService: RideServiceType;
@@ -180,94 +165,85 @@ const NewRidesDriver: FC<IProps> = (props) => {
 	};
 
 	return (
-		<Box sx={{ padding: 2 }}>
-			<TableContainer component={Paper}>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Created At</TableCell>
-							<TableCell>Start Address</TableCell>
-							<TableCell>End Address</TableCell>
-							<TableCell>Client Email</TableCell>
-							<TableCell>Driver Email</TableCell>
-							<TableCell>Status</TableCell>
-							<TableCell>Price</TableCell>
-							<TableCell>Accept</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{rideData.map((ride) => (
-							<TableRow key={ride.createdAtTimestamp}>
-								<TableCell>{ride.createdAtTimestamp}</TableCell>
-								<TableCell>{ride.startAddress}</TableCell>
-								<TableCell>{ride.endAddress}</TableCell>
-								<TableCell>{ride.clientEmail}</TableCell>
-								<TableCell>
-									{ride.driverEmail
-										? ride.driverEmail
-										: 'N/A'}
-								</TableCell>
-								<TableCell>{ride.status}</TableCell>
-								<TableCell>{ride.price}</TableCell>
-								<TableCell>
-									<Button
-										variant='contained'
-										color='primary'
-										onClick={() =>
-											handleAcceptRide(
-												ride.clientEmail,
-												ride.createdAtTimestamp
-											)
-										}
-										disabled={
-											driverStatus ===
-												DriverStatus.BANNED ||
-											driverStatus ===
-												DriverStatus.NOT_VERIFIED
-										}
-									>
-										Accept
-									</Button>
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
-			<Dialog
-				open={isModalOpen}
-				onClose={toggleModal}
-				aria-labelledby='ride-modal-title'
-			>
-				<DialogTitle id='ride-modal-title'>Ride Details</DialogTitle>
-				<DialogContent>
-					<Typography>You accepted the ride</Typography>
+		<Container>
+			<h2>New Rides</h2>
+			<Table striped bordered hover>
+				<thead>
+					<tr>
+						<th>Created At</th>
+						<th>Start Address</th>
+						<th>End Address</th>
+						<th>Client Email</th>
+						<th>Driver Email</th>
+						<th>Status</th>
+						<th>Price</th>
+						<th>Accept</th>
+					</tr>
+				</thead>
+				<tbody>
+					{rideData.map((ride) => (
+						<tr key={ride.createdAtTimestamp}>
+							<td>{ride.createdAtTimestamp}</td>
+							<td>{ride.startAddress}</td>
+							<td>{ride.endAddress}</td>
+							<td>{ride.clientEmail}</td>
+							<td>
+								{ride.driverEmail ? ride.driverEmail : 'N/A'}
+							</td>
+							<td>{ride.status}</td>
+							<td>{ride.price}</td>
+							<td>
+								<Button
+									variant='primary'
+									onClick={() =>
+										handleAcceptRide(
+											ride.clientEmail,
+											ride.createdAtTimestamp
+										)
+									}
+									disabled={
+										driverStatus === DriverStatus.BANNED ||
+										driverStatus ===
+											DriverStatus.NOT_VERIFIED
+									}
+								>
+									Accept
+								</Button>
+							</td>
+						</tr>
+					))}
+				</tbody>
+			</Table>
+			<Modal show={isModalOpen} onHide={toggleModal}>
+				<Modal.Header closeButton>
+					<Modal.Title>Ride Details</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<p>You accepted the ride</p>
 					{arrivalTime === null && (
-						<Typography>
-							Estimate time {formatTime(arrivalTime!)}
-						</Typography>
+						<p>Estimate time {formatTime(arrivalTime!)}</p>
 					)}
-					<Typography>
+					<p>
 						Countdown to driver's arrival:{' '}
 						{arrivalTime !== null ? formatTime(arrivalTime) : ''}
-					</Typography>
+					</p>
 					{rideDuration !== null && (
-						<Typography>
+						<p>
 							Countdown to end of ride: {formatTime(rideDuration)}
-						</Typography>
+						</p>
 					)}
-				</DialogContent>
-				<DialogActions>
+				</Modal.Body>
+				<Modal.Footer>
 					<Button
 						onClick={toggleModal}
-						color='primary'
+						variant='secondary'
 						disabled={isRideActive}
 					>
 						Close
 					</Button>
-				</DialogActions>
-			</Dialog>
-		</Box>
+				</Modal.Footer>
+			</Modal>
+		</Container>
 	);
 };
 

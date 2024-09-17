@@ -3,18 +3,7 @@ import { JWTStorageType } from '../Services/JWTStorage';
 import { FC, useEffect, useState } from 'react';
 import { DriverServiceType } from '../Services/DriverService';
 import { DriverStatus } from '../models/Driver';
-import {
-	Box,
-	Typography,
-	Button,
-	List,
-	ListItemButton,
-	ListItemText,
-	Toolbar,
-	AppBar,
-	Drawer,
-	Divider,
-} from '@mui/material';
+import { Button, Container, Navbar, Nav } from 'react-bootstrap';
 
 interface IProps {
 	jwtService: JWTStorageType;
@@ -57,88 +46,70 @@ const HomePage: FC<IProps> = (props) => {
 	}, [props.driverService, userMail, userRole]);
 
 	return (
-		<Box sx={{ display: 'flex' }}>
-			<Drawer
-				variant='permanent'
-				sx={{
-					width: 240,
-					flexShrink: 0,
-					[`& .MuiDrawer-paper`]: {
-						width: 240,
-						boxSizing: 'border-box',
-					},
-				}}
-			>
-				<Toolbar />
-				<Divider />
-				<List>
-					<ListItemButton component={Link} to='/profile'>
-						<ListItemText primary='Profile' />
-					</ListItemButton>
-					{userRole === 'CLIENT' && (
-						<>
-							<ListItemButton component={Link} to='/new-ride'>
-								<ListItemText primary='New ride' />
-							</ListItemButton>
-							<ListItemButton
-								component={Link}
-								to='/previous-rides-user'
-							>
-								<ListItemText primary='Previous rides' />
-							</ListItemButton>
-						</>
-					)}
-					{userRole === 'ADMIN' && (
-						<>
-							<ListItemButton component={Link} to='/verification'>
-								<ListItemText primary='Verification' />
-							</ListItemButton>
-							<ListItemButton component={Link} to='/all-rides'>
-								<ListItemText primary='All rides' />
-							</ListItemButton>
-						</>
-					)}
-					{userRole === 'DRIVER' && (
-						<>
-							<ListItemButton component={Link} to='/new-rides'>
-								<ListItemText primary='New rides' />
-							</ListItemButton>
-							<ListItemButton component={Link} to='/my-rides'>
-								<ListItemText primary='My rides' />
-							</ListItemButton>
-						</>
-					)}
-				</List>
-			</Drawer>
-			<Box component='main' sx={{ flexGrow: 1, p: 3 }}>
-				<AppBar
-					position='fixed'
-					sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-				>
-					<Toolbar>
-						<Typography variant='h6' noWrap sx={{ flexGrow: 1 }}>
-							Dashboard
-						</Typography>
-						{userRole === 'DRIVER' && (
-							<Typography variant='body1' sx={{ marginRight: 2 }}>
-								{driverStatus === DriverStatus.NOT_VERIFIED
-									? 'Driver is not verified'
-									: driverStatus === DriverStatus.VERIFIED
-									? 'Driver is verified'
-									: driverStatus === DriverStatus.BANNED
-									? 'Driver is banned'
-									: 'Unknown status'}
-							</Typography>
+		<>
+			<Navbar bg='dark' variant='dark'>
+				<Container>
+					<Navbar.Brand>Dashboard</Navbar.Brand>
+					<Nav className='me-auto'>
+						<Nav.Link as={Link} to='/profile'>
+							Profile
+						</Nav.Link>
+						{userRole === 'CLIENT' && (
+							<>
+								<Nav.Link as={Link} to='/new-ride'>
+									New ride
+								</Nav.Link>
+								<Nav.Link as={Link} to='/previous-rides-user'>
+									Previous rides
+								</Nav.Link>
+							</>
 						)}
-						<Button color='inherit' onClick={handleLogout}>
+						{userRole === 'ADMIN' && (
+							<>
+								<Nav.Link as={Link} to='/verification'>
+									Verification
+								</Nav.Link>
+								<Nav.Link as={Link} to='/all-rides'>
+									All rides
+								</Nav.Link>
+							</>
+						)}
+						{userRole === 'DRIVER' && (
+							<>
+								<Nav.Link as={Link} to='/new-rides'>
+									New rides
+								</Nav.Link>
+								<Nav.Link as={Link} to='/my-rides'>
+									My rides
+								</Nav.Link>
+							</>
+						)}
+					</Nav>
+					<Navbar.Text>
+						{userRole === 'DRIVER' && (
+							<>
+								{driverStatus === DriverStatus.NOT_VERIFIED &&
+									'Driver is not verified'}
+								{driverStatus === DriverStatus.VERIFIED &&
+									'Driver is verified'}
+								{driverStatus === DriverStatus.BANNED &&
+									'Driver is banned'}
+								{driverStatus !== DriverStatus.NOT_VERIFIED &&
+									driverStatus !== DriverStatus.VERIFIED &&
+									driverStatus !== DriverStatus.BANNED &&
+									'Unknown status'}
+							</>
+						)}
+						<Button variant='outline-info' onClick={handleLogout}>
 							Logout
 						</Button>
-					</Toolbar>
-				</AppBar>
-				<Toolbar />
+					</Navbar.Text>
+				</Container>
+			</Navbar>
+			<Container fluid>
 				<Outlet />
-			</Box>
-		</Box>
+			</Container>
+		</>
 	);
 };
 

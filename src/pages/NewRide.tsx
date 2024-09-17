@@ -11,16 +11,7 @@ import {
 } from '../models/Ride';
 import { RideServiceType } from '../Services/RideService';
 import { DriverServiceType } from '../Services/DriverService';
-import {
-	Box,
-	TextField,
-	Button,
-	Typography,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-} from '@mui/material';
+import { Container, Form, Button, Modal, Row, Col } from 'react-bootstrap';
 import Rating from '../components/ui/Rating';
 
 interface IProps {
@@ -232,111 +223,107 @@ const NewRide: FC<IProps> = (props) => {
 
 	return (
 		<>
-			<Box sx={{ maxWidth: 600, margin: 'auto', padding: 3 }}>
-				<Typography variant='h4' gutterBottom>
-					Create a new Ride
-				</Typography>
-				<Box sx={{ marginBottom: 2 }}>
-					<TextField
-						label='Start Address'
-						value={formData.StartAddress}
-						type='text'
-						onChange={(e) => {
-							setFormData((prevState) => ({
-								...prevState,
-								StartAddress: e.target.value,
-							}));
-						}}
-						fullWidth
-						variant='outlined'
-					/>
-				</Box>
-				<Box sx={{ marginBottom: 2 }}>
-					<TextField
-						label='End Address'
-						value={formData.EndAddress}
-						type='text'
-						onChange={(e) => {
-							setFormData((prevState) => ({
-								...prevState,
-								EndAddress: e.target.value,
-							}));
-						}}
-						fullWidth
-						variant='outlined'
-					/>
-				</Box>
-				<Button
-					variant='contained'
-					color='primary'
-					onClick={handleOrderClick}
-					disabled={isRideActive}
-					fullWidth
-				>
-					Order
-				</Button>
-			</Box>
+			<Container className='p-4' style={{ maxWidth: '600px' }}>
+				<h2>Create a New Ride</h2>
+				<Form>
+					<Form.Group controlId='startAddress' className='mb-3'>
+						<Form.Label>Start Address</Form.Label>
+						<Form.Control
+							type='text'
+							placeholder='Enter start address'
+							value={formData.StartAddress}
+							onChange={(e) =>
+								setFormData((prevState) => ({
+									...prevState,
+									StartAddress: e.target.value,
+								}))
+							}
+						/>
+					</Form.Group>
+					<Form.Group controlId='endAddress' className='mb-3'>
+						<Form.Label>End Address</Form.Label>
+						<Form.Control
+							type='text'
+							placeholder='Enter end address'
+							value={formData.EndAddress}
+							onChange={(e) =>
+								setFormData((prevState) => ({
+									...prevState,
+									EndAddress: e.target.value,
+								}))
+							}
+						/>
+					</Form.Group>
+					<Button
+						variant='primary'
+						onClick={handleOrderClick}
+						disabled={isRideActive}
+						className='w-100'
+					>
+						Order
+					</Button>
+				</Form>
+			</Container>
+
 			{estimateResponse && (
-				<Dialog open={isModalOpen} onClose={toggleModal}>
-					<DialogTitle>Ride Details</DialogTitle>
-					<DialogContent>
-						<Typography>
-							Price: {estimateResponse.priceEstimate}
-						</Typography>
-						{arrivalTime === null && (
-							<Typography>
-								Estimate time{' '}
-								{formatTime(
-									estimateResponse.estimatedDriverArrivalSeconds
-								)}
-							</Typography>
-						)}
-						<Typography>
+				<Modal
+					show={isModalOpen}
+					onHide={toggleModal}
+					backdrop={isRideActive ? 'static' : true}
+					keyboard={!isRideActive}
+				>
+					<Modal.Header closeButton={!isRideActive}>
+						<Modal.Title>Ride Details</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<p>Price: {estimateResponse.priceEstimate}</p>
+						<p>
 							Countdown to driver's arrival:{' '}
 							{arrivalTime !== null
 								? formatTime(arrivalTime)
 								: ''}
-						</Typography>
+						</p>
 						{rideDuration !== null && (
-							<Typography>
+							<p>
 								Countdown to end of ride:{' '}
 								{formatTime(rideDuration)}
-							</Typography>
+							</p>
 						)}
-					</DialogContent>
-					<DialogActions>
+					</Modal.Body>
+					<Modal.Footer>
 						<Button
+							variant='secondary'
 							onClick={toggleModal}
 							disabled={isRideActive}
-							color='secondary'
 						>
 							Close
 						</Button>
 						<Button
+							variant='primary'
 							onClick={handleNewRideClick}
 							disabled={isRideActive}
-							color='primary'
 						>
 							Accept ride
 						</Button>
-					</DialogActions>
-				</Dialog>
+					</Modal.Footer>
+				</Modal>
 			)}
+
 			{isRatingOpen && (
-				<Dialog open={isRatingOpen} onClose={toggleModalRating}>
-					<DialogTitle>Rate the Ride</DialogTitle>
-					<DialogContent>
-						<Typography gutterBottom>
-							Leave us your rating for the ride!
-						</Typography>
+				<Modal show={isRatingOpen} onHide={toggleModalRating}>
+					<Modal.Header closeButton>
+						<Modal.Title>Rate the Ride</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<p>Leave us your rating for the ride!</p>
 						<Rating onRate={handleRate} />
-					</DialogContent>
-					<DialogActions>
-						<Button onClick={toggleModalRating} color='primary'>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button variant='primary' onClick={toggleModalRating}>
 							Close
 						</Button>
-					</DialogActions>
-				</Dialog>
+					</Modal.Footer>
+				</Modal>
 			)}
 		</>
 	);

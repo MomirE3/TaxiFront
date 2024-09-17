@@ -4,18 +4,7 @@ import { Profile, UpdateUserProfileRequest } from '../models/Auth/Profile';
 import { AuthServiceType } from '../Services/AuthService';
 import { BlobServiceType } from '../Services/BlobService';
 import { SHA256 } from 'crypto-js';
-import {
-	Box,
-	TextField,
-	Button,
-	Select,
-	MenuItem,
-	InputLabel,
-	FormControl,
-	Typography,
-	Avatar,
-	SelectChangeEvent,
-} from '@mui/material';
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 
 interface IProps {
 	authService: AuthServiceType;
@@ -71,21 +60,11 @@ const ProfilePage: FC<IProps> = (props) => {
 		fetchImage();
 	}, [props.blobService, formData.imagePath]);
 
-	const handleInputChange = (
-		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => {
+	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData({
 			...formData,
 			[name]: value,
-		});
-	};
-
-	const handleSelectChange = (e: SelectChangeEvent<UserType>) => {
-		const { name, value } = e.target;
-		setFormData({
-			...formData,
-			[name as keyof Profile]: value as string,
 		});
 	};
 
@@ -166,125 +145,100 @@ const ProfilePage: FC<IProps> = (props) => {
 	}
 
 	return (
-		<Box
-			component='form'
-			sx={{
-				display: 'flex',
-				flexDirection: 'column',
-				gap: 2,
-				maxWidth: 400,
-				margin: 'auto',
-			}}
-			onSubmit={handleSubmit}
-		>
-			<TextField
-				label='Username'
-				value={formData.username}
-				type='text'
-				name='username'
-				onChange={handleInputChange}
-				fullWidth
-				variant='outlined'
-			/>
-
-			<TextField
-				label='Email'
-				value={formData.email}
-				type='email'
-				name='email'
-				onChange={handleInputChange}
-				fullWidth
-				variant='outlined'
-				InputProps={{
-					readOnly: true,
-				}}
-			/>
-
-			<TextField
-				label='Password'
-				value={formData.password}
-				type='password'
-				name='password'
-				onChange={handleInputChange}
-				fullWidth
-				variant='outlined'
-			/>
-
-			<TextField
-				label='Full Name'
-				value={formData.fullname}
-				type='text'
-				name='fullname'
-				onChange={handleInputChange}
-				fullWidth
-				variant='outlined'
-			/>
-
-			<TextField
-				label='Birth Date'
-				value={formatDateForInput(formData.dateOfBirth)}
-				type='date'
-				name='dateOfBirth'
-				onChange={handleInputChange}
-				fullWidth
-				variant='outlined'
-			/>
-
-			<TextField
-				label='Address'
-				value={formData.address}
-				type='text'
-				name='address'
-				onChange={handleInputChange}
-				fullWidth
-				variant='outlined'
-			/>
-
-			<FormControl fullWidth variant='outlined'>
-				<InputLabel id='userType-label'>User Type</InputLabel>
-				<Select
-					labelId='userType-label'
-					id='userType'
-					name='type'
-					value={formData.type}
-					label='User Type'
-					onChange={handleSelectChange}
-					disabled
-				>
-					<MenuItem value={UserType.Admin}>Administrator</MenuItem>
-					<MenuItem value={UserType.Client}>User</MenuItem>
-					<MenuItem value={UserType.Driver}>Driver</MenuItem>
-				</Select>
-			</FormControl>
-
-			<Button variant='contained' component='label'>
-				Upload Image
-				<input
-					type='file'
-					hidden
-					accept='image/*'
-					onChange={handleImageChange}
-				/>
-			</Button>
-
-			{formData.imagePath && (
-				<Box sx={{ textAlign: 'center', mt: 2 }}>
-					<Avatar
-						sx={{ width: 100, height: 100 }}
-						src={
-							formData.imagePath instanceof File
-								? URL.createObjectURL(formData.imagePath)
-								: imageUrl
-						}
-						alt='Preview'
+		<Container>
+			<Form onSubmit={handleSubmit}>
+				<Form.Group controlId='formUsername'>
+					<Form.Label>Username</Form.Label>
+					<Form.Control
+						type='text'
+						name='username'
+						value={formData.username}
+						onChange={handleInputChange}
 					/>
-				</Box>
-			)}
+				</Form.Group>
 
-			<Button type='submit' variant='contained' color='primary'>
-				Submit
-			</Button>
-		</Box>
+				<Form.Group controlId='formEmail' className='mt-3'>
+					<Form.Label>Email</Form.Label>
+					<Form.Control
+						type='email'
+						name='email'
+						value={formData.email}
+						readOnly
+					/>
+				</Form.Group>
+
+				<Form.Group controlId='formPassword' className='mt-3'>
+					<Form.Label>Password</Form.Label>
+					<Form.Control
+						type='password'
+						name='password'
+						value={formData.password}
+						onChange={handleInputChange}
+					/>
+				</Form.Group>
+
+				<Form.Group controlId='formFullname' className='mt-3'>
+					<Form.Label>Full Name</Form.Label>
+					<Form.Control
+						type='text'
+						name='fullname'
+						value={formData.fullname}
+						onChange={handleInputChange}
+					/>
+				</Form.Group>
+
+				<Form.Group controlId='formDateOfBirth' className='mt-3'>
+					<Form.Label>Birth Date</Form.Label>
+					<Form.Control
+						type='date'
+						name='dateOfBirth'
+						value={formatDateForInput(formData.dateOfBirth)}
+						onChange={handleInputChange}
+					/>
+				</Form.Group>
+
+				<Form.Group controlId='formAddress' className='mt-3'>
+					<Form.Label>Address</Form.Label>
+					<Form.Control
+						type='text'
+						name='address'
+						value={formData.address}
+						onChange={handleInputChange}
+					/>
+				</Form.Group>
+
+				<Form.Group controlId='formImage' className='mt-3'>
+					<Form.Label>Upload Image</Form.Label>
+					<Form.Control
+						type='file'
+						onChange={handleImageChange}
+						accept='image/*'
+					/>
+				</Form.Group>
+
+				{formData.imagePath && (
+					<div className='mt-3 text-center'>
+						<img
+							src={
+								formData.imagePath instanceof File
+									? URL.createObjectURL(formData.imagePath)
+									: imageUrl
+							}
+							alt='Profile'
+							style={{
+								width: '100px',
+								height: '100px',
+								borderRadius: '50%',
+							}}
+						/>
+					</div>
+				)}
+
+				<Button className='mt-3' type='submit'>
+					Submit
+				</Button>
+			</Form>
+		</Container>
 	);
 };
 

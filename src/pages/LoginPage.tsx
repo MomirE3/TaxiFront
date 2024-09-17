@@ -7,7 +7,7 @@ import { JWTStorageType } from '../Services/JWTStorage';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuth } from '../components/auth/GoogleAuth';
 import { GoogleAuthService } from '../Services/Google/GoogleAuth';
-import { TextField, Button, Typography, Alert, Box } from '@mui/material';
+import { Form, Button, Container } from 'react-bootstrap';
 
 interface IProps {
 	authService: AuthServiceType;
@@ -59,88 +59,88 @@ export const LoginPage: FC<IProps> = (props) => {
 	}, [loginFormData, loginFormValid]);
 
 	return (
-		<Box
-			component='form'
-			sx={{
-				display: 'flex',
-				flexDirection: 'column',
-				gap: 2,
-				maxWidth: 400,
-				margin: 'auto',
-				height: '100vh',
-				justifyContent: 'center',
-			}}
-			onSubmit={(e) => {
-				e.preventDefault();
-				onLogin();
-			}}
+		<Container
+			className='d-flex flex-column justify-content-center'
+			style={{ height: '100vh', maxWidth: '400px' }}
 		>
-			<TextField
-				label='Email'
-				variant='outlined'
-				error={!loginFormValid.Email}
-				helperText={!loginFormValid.Email ? 'Invalid email format' : ''}
-				onChange={(e) => {
-					const val = e.target.value;
-					setLoginFormData({ ...loginFormData, Email: val });
-					setLoginFormValid({
-						...loginFormValid,
-						Email: EMAIL_REGEX.test(val),
-					});
+			<Form
+				onSubmit={(e) => {
+					e.preventDefault();
+					onLogin();
 				}}
-				value={loginFormData.Email}
-				type='email'
-				fullWidth
-			/>
+			>
+				<Form.Group controlId='email'>
+					<Form.Label>Email</Form.Label>
+					<Form.Control
+						type='email'
+						placeholder='Enter your email'
+						value={loginFormData.Email}
+						isInvalid={!loginFormValid.Email}
+						onChange={(e) => {
+							const val = e.target.value;
+							setLoginFormData({ ...loginFormData, Email: val });
+							setLoginFormValid({
+								...loginFormValid,
+								Email: EMAIL_REGEX.test(val),
+							});
+						}}
+					/>
+					<Form.Control.Feedback type='invalid'>
+						Invalid email format
+					</Form.Control.Feedback>
+				</Form.Group>
 
-			{loginFormData.authType === AuthType.TRADITIONAL && (
-				<TextField
-					label='Password'
-					variant='outlined'
-					type='password'
-					error={!loginFormValid.Password}
-					helperText={
-						!loginFormValid.Password
-							? 'Invalid password format'
-							: ''
-					}
-					onChange={(e) => {
-						const val = e.target.value;
-						setLoginFormData({ ...loginFormData, Password: val });
+				{loginFormData.authType === AuthType.TRADITIONAL && (
+					<Form.Group controlId='password' className='mt-3'>
+						<Form.Label>Password</Form.Label>
+						<Form.Control
+							type='password'
+							placeholder='Enter your password'
+							value={loginFormData.Password ?? ''}
+							isInvalid={!loginFormValid.Password}
+							onChange={(e) => {
+								const val = e.target.value;
+								setLoginFormData({
+									...loginFormData,
+									Password: val,
+								});
+								setLoginFormValid({
+									...loginFormValid,
+									Password: PASSWORD_REGEX.test(val),
+								});
+							}}
+						/>
+						<Form.Control.Feedback type='invalid'>
+							Invalid password format
+						</Form.Control.Feedback>
+					</Form.Group>
+				)}
+
+				<GoogleAuth
+					googleAuthService={GoogleAuthService}
+					setUserInfo={(userInfo) => {
+						setLoginFormData({
+							Password: undefined,
+							Email: userInfo.email,
+							authType: AuthType.GOOGLE,
+						});
 						setLoginFormValid({
 							...loginFormValid,
-							Password: PASSWORD_REGEX.test(val),
+							Email: EMAIL_REGEX.test(userInfo.email),
 						});
+						setUsedGoogleAuth(true);
 					}}
-					value={loginFormData.Password ?? ''}
-					fullWidth
 				/>
-			)}
 
-			<GoogleAuth
-				googleAuthService={GoogleAuthService}
-				setUserInfo={(userInfo) => {
-					setLoginFormData({
-						Password: undefined,
-						Email: userInfo.email,
-						authType: AuthType.GOOGLE,
-					});
-					setLoginFormValid({
-						...loginFormValid,
-						Email: EMAIL_REGEX.test(userInfo.email),
-					});
-					setUsedGoogleAuth(true);
-				}}
-			/>
+				<div className='mt-3'>
+					<span>Don't have an account? </span>
+					<Link to='/register'>Register here!</Link>
+				</div>
 
-			<Typography variant='body2'>
-				Don't have an account?{' '}
-				<Link to='/register'>Register here!</Link>
-			</Typography>
-
-			<Button type='submit' variant='contained' color='primary'>
-				Login
-			</Button>
-		</Box>
+				<Button variant='primary' type='submit' className='mt-3'>
+					Login
+				</Button>
+			</Form>
+		</Container>
 	);
 };

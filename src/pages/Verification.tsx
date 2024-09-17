@@ -1,18 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { DriverServiceType } from '../Services/DriverService';
 import { Driver, DriverStatus, UpdateDriverStatusData } from '../models/Driver';
-import {
-	Box,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Button,
-	Typography,
-	Paper,
-} from '@mui/material';
+import { Table, Button, Container } from 'react-bootstrap';
 
 interface IProps {
 	driverService: DriverServiceType;
@@ -82,75 +71,65 @@ const Verification: FC<IProps> = (props) => {
 	}
 
 	return (
-		<Box sx={{ padding: 2 }}>
-			<Typography variant='h4' gutterBottom>
-				Driver Verification
-			</Typography>
-			<TableContainer component={Paper}>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Username</TableCell>
-							<TableCell>Email</TableCell>
-							<TableCell>Full Name</TableCell>
-							<TableCell>Date of Birth</TableCell>
-							<TableCell>Address</TableCell>
-							<TableCell>Rating</TableCell>
-							<TableCell>Status</TableCell>
-							<TableCell>Actions</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{driversData.map((driver) => (
-							<TableRow key={driver.username}>
-								<TableCell>{driver.username}</TableCell>
-								<TableCell>{driver.email}</TableCell>
-								<TableCell>{driver.fullname}</TableCell>
-								<TableCell>{driver.dateOfBirth}</TableCell>
-								<TableCell>{driver.address}</TableCell>
-								<TableCell>
-									{driver.rating === 0
-										? 'N/A'
-										: driver.rating}
-								</TableCell>
-								<TableCell>{driver.status}</TableCell>
-								<TableCell>
-									{driver.status ===
-										DriverStatus.NOT_VERIFIED && (
-										<Button
-											variant='contained'
-											color='primary'
-											onClick={() => handleVerify(driver)}
-										>
-											Verify
-										</Button>
-									)}
-									{driver.status ===
-										DriverStatus.VERIFIED && (
-										<Button
-											variant='contained'
-											color='secondary'
-											onClick={() => handleBan(driver)}
-										>
-											Ban
-										</Button>
-									)}
-									{driver.status === DriverStatus.BANNED && (
-										<Button
-											variant='contained'
-											color='success'
-											onClick={() => handleUnban(driver)}
-										>
-											Unban
-										</Button>
-									)}
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		</Box>
+		<Container className='mt-4'>
+			<h2>Driver Verification</h2>
+			<Table striped bordered hover>
+				<thead>
+					<tr>
+						<th>Username</th>
+						<th>Email</th>
+						<th>Full Name</th>
+						<th>Date of Birth</th>
+						<th>Address</th>
+						<th>Rating</th>
+						<th>Status</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{driversData.map((driver) => (
+						<tr key={driver.username}>
+							<td>{driver.username}</td>
+							<td>{driver.email}</td>
+							<td>{driver.fullname}</td>
+							<td>{driver.dateOfBirth}</td>
+							<td>{driver.address}</td>
+							<td>
+								{driver.rating === 0 ? 'N/A' : driver.rating}
+							</td>
+							<td>{driver.status}</td>
+							<td>
+								{driver.status ===
+									DriverStatus.NOT_VERIFIED && (
+									<Button
+										variant='primary'
+										onClick={() => handleVerify(driver)}
+									>
+										Verify
+									</Button>
+								)}
+								{driver.status === DriverStatus.VERIFIED && (
+									<Button
+										variant='danger'
+										onClick={() => handleBan(driver)}
+									>
+										Ban
+									</Button>
+								)}
+								{driver.status === DriverStatus.BANNED && (
+									<Button
+										variant='success'
+										onClick={() => handleUnban(driver)}
+									>
+										Unban
+									</Button>
+								)}
+							</td>
+						</tr>
+					))}
+				</tbody>
+			</Table>
+		</Container>
 	);
 };
 
