@@ -1,0 +1,30 @@
+.rating {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	padding: 10px;
+}
+
+.star {
+	font-size: 2.5rem;
+	color: #ccc;
+	background: none;
+	border: none;
+	cursor: pointer;
+	transition: color 0.3s ease, transform 0.2s ease;
+	padding: 5px;
+}
+
+.star:hover {
+	transform: scale(1.2);
+}
+
+.star.filled {
+	color: #e74c3c;
+}
+
+.star:active {
+	transform: scale(1);
+	color: #c0392b;
+}
