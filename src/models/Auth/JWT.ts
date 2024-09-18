@@ -6,5 +6,6 @@ export interface JWT {
 
 export interface CustomJwtPayload extends JwtPayload {
 	role: string;
-	email: string;
+	nameidentifier: string;
+	groupsid: string;
 }

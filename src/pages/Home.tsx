@@ -12,7 +12,8 @@ interface IProps {
 
 const HomePage: FC<IProps> = (props) => {
 	const [userRole, setUserRole] = useState('');
-	const [userMail, setUserMail] = useState('');
+	const [userId, setUserId] = useState('');
+	const [userRoleId, setUserRoleId] = useState('');
 	const [driverStatus, setDriverStatus] = useState<DriverStatus>();
 	const navigate = useNavigate();
 
@@ -27,7 +28,8 @@ const HomePage: FC<IProps> = (props) => {
 			const decoded = props.jwtService.decodeJWT(token.token);
 			if (decoded) {
 				setUserRole(decoded.role);
-				setUserMail(decoded.email);
+				setUserId(decoded.nameidentifier);
+				setUserRoleId(decoded.groupsid);
 			}
 		}
 	}, [props.jwtService]);
@@ -36,14 +38,14 @@ const HomePage: FC<IProps> = (props) => {
 		if (userRole === 'DRIVER') {
 			const fetchRides = async () => {
 				const data = await props.driverService.GetDriverStatus(
-					userMail
+					userRoleId
 				);
 				setDriverStatus(data);
 			};
 
 			fetchRides();
 		}
-	}, [props.driverService, userMail, userRole]);
+	}, [props.driverService, userRoleId, userRole]);
 
 	return (
 		<>

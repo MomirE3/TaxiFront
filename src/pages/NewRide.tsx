@@ -5,7 +5,6 @@ import {
 	DriverRating,
 	EstimateRide,
 	EstimateRideResponse,
-	GetRideStatusRequest,
 	RideStatus,
 	UpdateRideRequest,
 } from '../models/Ride';
@@ -84,14 +83,9 @@ const NewRide: FC<IProps> = (props) => {
 		let arrivalInterval: NodeJS.Timeout | null = null;
 		let rideInterval: NodeJS.Timeout | null = null;
 
-		if (isRideActive && !rideAccepted) {
+		if (isRideActive && !rideAccepted && newRideResponse) {
 			const interval = setInterval(async () => {
-				const request: GetRideStatusRequest = {
-					ClientEmail: newRideResponse?.clientEmail!,
-					RideCreatedAtTimestamp:
-						newRideResponse?.createdAtTimestamp!,
-				};
-				const response = await props.rideService.GetRideStatus(request);
+				const response = await props.rideService.GetRideStatus(newRideResponse.id);
 
 				if (response !== null) {
 					const rideStatus: CreateRideResponse =
@@ -113,9 +107,7 @@ const NewRide: FC<IProps> = (props) => {
 						);
 
 						setRatingDriverInformation({
-							ClientEmail: rideStatus.clientEmail!,
-							RideTimestamp: rideStatus.createdAtTimestamp!,
-							DriverEmail: rideStatus.driverEmail!,
+							RideId: rideStatus.id,
 							Value: 0!,
 						});
 
@@ -134,12 +126,12 @@ const NewRide: FC<IProps> = (props) => {
 													? prevTime - 1
 													: 0
 											);
-										}, 1000);
+										}, 100);
 									}
 									return 0;
 								}
 							});
-						}, 1000);
+						}, 100);
 					}
 				}
 			}, 5000);
@@ -182,10 +174,9 @@ const NewRide: FC<IProps> = (props) => {
 
 	useEffect(() => {
 		const finishRide = async () => {
-			if (newRideResponse?.clientEmail !== undefined) {
+			if (newRideResponse) {
 				const updateRequest: UpdateRideRequest = {
-					ClientEmail: newRideResponse?.clientEmail,
-					RideCreatedAtTimestamp: newRideResponse?.createdAtTimestamp,
+					RideId: newRideResponse.id,
 					Status: RideStatus.COMPLETED,
 				};
 

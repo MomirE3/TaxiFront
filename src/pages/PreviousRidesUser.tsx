@@ -41,9 +41,9 @@ const PreviousRidesUser: FC<IProps> = (props) => {
 							<td>{ride.createdAtTimestamp}</td>
 							<td>{ride.startAddress}</td>
 							<td>{ride.endAddress}</td>
-							<td>{ride.clientEmail}</td>
+							<td>{ride.clientId}</td>
 							<td>
-								{ride.driverEmail ? ride.driverEmail : 'N/A'}
+								{ride.driverId ? ride.driverId : 'N/A'}
 							</td>
 							<td>{ride.status}</td>
 							<td>{ride.price}</td>

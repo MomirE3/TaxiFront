@@ -37,14 +37,11 @@ async function GetAllDrivers() {
 	}
 }
 
-async function GetDriverStatus(email: string) {
+async function GetDriverStatus(driverId: string) {
 	const jtwToken = JWTStorage.getJWT();
 	try {
-		const res = await axios.post(
-			`${backend}/driver/driver-status`,
-			{
-				Email: email,
-			},
+		const res = await axios.get(
+			`${backend}/driver/driver-status/${driverId}`,
 			{
 				headers: {
 					Authorization: `Bearer ${jtwToken?.token}`,
@@ -57,14 +54,11 @@ async function GetDriverStatus(email: string) {
 	}
 }
 
-async function GetDriverRating(email: string) {
+async function GetDriverRating(driverId: string) {
 	const jtwToken = JWTStorage.getJWT();
 	try {
-		const res = await axios.post(
-			`${backend}/driver/avg-rating-driver`,
-			{
-				Email: email,
-			},
+		const res = await axios.get(
+			`${backend}/driver/avg-rating-driver/${driverId}`,
 			{
 				headers: {
 					Authorization: `Bearer ${jtwToken?.token}`,
@@ -81,8 +75,10 @@ async function UpdateDriverStatus(driverStatus: UpdateDriverStatusData) {
 	const jtwToken = JWTStorage.getJWT();
 	try {
 		const res = await axios.patch(
-			`${backend}/driver/driver-status`,
-			driverStatus,
+			`${backend}/driver/driver-status/${driverStatus.DriverId}`,
+			{
+				"Status": driverStatus.Status
+			},
 			{
 				headers: {
 					Authorization: `Bearer ${jtwToken?.token}`,
@@ -100,8 +96,8 @@ export type DriverServiceType = {
 		driverRating: DriverRating
 	) => Promise<null | AxiosResponse<any, any>>;
 	GetAllDrivers: () => Promise<Driver[] | null>;
-	GetDriverStatus: (email: string) => Promise<any>;
-	GetDriverRating: (email: string) => Promise<any>;
+	GetDriverStatus: (driverId: string) => Promise<any>;
+	GetDriverRating: (driverId: string) => Promise<any>;
 	UpdateDriverStatus: (
 		driverStatus: UpdateDriverStatusData
 	) => Promise<null | AxiosResponse<any, any>>;

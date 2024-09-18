@@ -16,9 +16,10 @@ export interface CreateRide {
 }
 
 export interface CreateRideResponse {
-	clientEmail: string;
+	id: string;
+	clientId: string;
 	createdAtTimestamp: number;
-	driverEmail: string | null;
+	driverId: string | null;
 	endAddress: string;
 	price: number;
 	startAddress: string;
@@ -28,8 +29,7 @@ export interface CreateRideResponse {
 }
 
 export interface UpdateRideRequest {
-	ClientEmail: string;
-	RideCreatedAtTimestamp: number;
+	RideId: string;
 	Status: RideStatus;
 }
 
@@ -39,14 +39,7 @@ export enum RideStatus {
 	COMPLETED = 2,
 }
 
-export interface GetRideStatusRequest {
-	ClientEmail: string;
-	RideCreatedAtTimestamp: number;
-}
-
 export interface DriverRating {
-	ClientEmail: string;
-	RideTimestamp: number;
-	DriverEmail: string;
+	RideId: string
 	Value: number;
 }

@@ -18,7 +18,7 @@ const Verification: FC<IProps> = (props) => {
 					data.map(async (driver) => {
 						const rating =
 							await props.driverService.GetDriverRating(
-								driver.email
+								driver.driverId
 							);
 						return { ...driver, rating };
 					})
@@ -47,7 +47,7 @@ const Verification: FC<IProps> = (props) => {
 		action: string
 	) {
 		const request: UpdateDriverStatusData = {
-			Email: driver.email,
+			DriverId: driver.driverId,
 			Status: status,
 		};
 

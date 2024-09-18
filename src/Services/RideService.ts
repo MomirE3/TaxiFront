@@ -3,7 +3,6 @@ import {
 	CreateRide,
 	CreateRideResponse,
 	EstimateRide,
-	GetRideStatusRequest,
 	UpdateRideRequest,
 } from '../models/Ride';
 import { JWTStorage } from './JWTStorage';
@@ -92,12 +91,11 @@ async function UpdateRideRequests(updateRideRequest: UpdateRideRequest) {
 	}
 }
 
-async function GetRideStatus(getRideStatusRequest: GetRideStatusRequest) {
+async function GetRideStatus(rideId: string) {
 	const jtwToken = JWTStorage.getJWT();
 	try {
-		const res = await axios.post(
-			`${backend}/ride/get-ride`,
-			getRideStatusRequest,
+		const res = await axios.get(
+			`${backend}/ride/get-ride/${rideId}`,
 			{
 				headers: {
 					Authorization: `Bearer ${jtwToken?.token}`,
@@ -123,7 +121,7 @@ export type RideServiceType = {
 		updateRideRequest: UpdateRideRequest
 	) => Promise<null | AxiosResponse<any, any>>;
 	GetRideStatus: (
-		getRideStatusRequest: GetRideStatusRequest
+		rideId: string
 	) => Promise<null | AxiosResponse<any, any>>;
 };
 
